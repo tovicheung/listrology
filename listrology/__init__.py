@@ -18,11 +18,14 @@ class List(list):
         return cls(args)
     
     def __getitem__(self, arg):
+        """Ensure List[2:4] also returns List
+        """
         if isinstance(arg, slice):
             return type(self)(super().__getitem__(arg))
         return super().__getitem__(arg)
     
     def copy(self):
+        """Copy and preserve type"""
         return type(self)(super().copy())
     
     def sort(self, key=None, reverse=False):
@@ -104,6 +107,7 @@ class List(list):
             raise IndexError("Index out of range (1st argument in overwrite())")
         if not self.includes(start):
             raise IndexError("Index out of range (2nd argument in overwrite())")
+
         if end is None:
             new[target] = self[start]
         else:
@@ -121,9 +125,11 @@ class List(list):
         return any(pred(x) for x in self)
     
     def as_slice(self):
+        """Returns a slice that reprsents the list"""
         return slice(len(self))
     
     def zip(self, other):
+        """Returns something like L[(x1, y1), (x2, y2), (x3, y3)]"""
         return type(self)(zip(self, other))
     
     def first(self, pred, return_index=False):
@@ -135,6 +141,7 @@ class List(list):
                 return item
     
     def flatten1(self):
+        """flatten by one level"""
         new = type(self)()
         for item in self:
             if _is_sequence(item):
@@ -150,9 +157,9 @@ class List(list):
             raise ValueError("depth must be greater than 0")
         new = self.copy()
         for _ in range(depth):
-            if new.any(_is_sequence): # optimization
+            if new.any(_is_sequence):
                 new = new.flatten1()
-            else:
+            else: # optimization, checks if there are sequences left
                 break
         return new
     
@@ -162,6 +169,7 @@ class List(list):
             func(item)
     
     def reversed(self):
+        """for method chaining"""
         return self[::-1]
 
     def reduce(self, func, initial_value=_sentinel):
@@ -170,11 +178,13 @@ class List(list):
         return reduce(func, self, initial_value)
     
     def rreduce(self, func, initial_value=_sentinel):
+        """reduce() but from the right"""
         if initial_value is _sentinel:
             return reduce(func, reversed(self))
         return reduce(func, reversed(self), initial_value)
     
     def enumerations(self):
+        """Returns something like L[(0, item0), (1, item1), (2, item2)]"""
         return type(self)(enumerate(self))
     
     def fill(self, value, start, end=None):
@@ -190,12 +200,15 @@ class List(list):
         return new
     
     def indices(self):
+        """Returns a list of indices"""
         return type(self)(range(len(self)))
     
     def indices_range(self):
+        """Returns a range representing the indices"""
         return range(len(self))
     
     def rotate(self, count=1):
+        """For each rotation, the first element is moved to the last"""
         count = count % len(self)
         new = self.copy()
         if count == 0:
@@ -226,15 +239,16 @@ class List(list):
         return map(lambda x: x[0], filter(lambda x: x[1][0] != x[1][1], self.zip(other).enumerations()))
     
     def mismatches(self, other, return_index=False):
+        """Get mismatch pairs but as a List object (not lazy evaluation)"""
         return type(self)(self.mismatch(other, return_index=return_index))
     
     def first_mismatch(self, other, return_index=False):
         return next(iter(self.mismatch(other, return_index)))
 
-L = List # shorthand
+L = List # shorthand constructor
 
 if __name__ == "__main__":
-    # demo in docs
+    # the demo in docs
     volcano_heights = L([412, 399, 276, 591, 482, 451, 521, 529, 521, 426, 511, 426, 426])
     print("These are some volcano heights:", volcano_heights)
     # find all volcano heights that are 400m-525m tall and remove duplicates

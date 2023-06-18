@@ -1,5 +1,5 @@
 from listrology import L
-
+import funcy
 a = L[12, 2]
 assert a == [12, 2]
 
