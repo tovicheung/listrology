@@ -1,5 +1,11 @@
 # Listrology
 name is suggested by our good friend chatgpt
+Listrology extends the functionality of lists
+
+## Installation
+`pip install listrology`
+
+## Usage
 
 Listrology contains a subclass of list which provides a number of methods that are useful
 ```py
