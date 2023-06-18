@@ -244,6 +244,18 @@ class List(list):
     
     def first_mismatch(self, other, return_index=False):
         return next(iter(self.mismatch(other, return_index)))
+    
+    def chunks(self, n, drop_extra=False, strict=False):
+        if strict and len(self) % n != 0:
+            raise ValueError("length of List is not divisible by n (strict=True)")
+        if not isinstance(n, int):
+            raise TypeError("n must be an integer")
+        if n < 1:
+            raise ValueError("n must be a positive integer")
+        new = [self[i:i+n] for i in range(0, len(self), n)]
+        if drop_extra and len(new[-1]) != n:
+            new.pop(-1)
+        return new
 
 L = List # shorthand constructor
 
